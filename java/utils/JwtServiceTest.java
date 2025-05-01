@@ -34,7 +34,7 @@ class JwtServiceTest {
     }
 
     @Test
-    void testGenerateAndValidateAccessToken() {
+    void BUG002() {
         String token = jwtService.generateAccessToken(mockUser);
 
         assertNotNull(token);
@@ -44,21 +44,21 @@ class JwtServiceTest {
     }
 
     @Test
-    void testGenerateRefreshToken() {
+    void BUG003() {
         String refreshToken = jwtService.generateRefreshToken(mockUser);
         assertNotNull(refreshToken);
         assertTrue(jwtService.isTokenValid(refreshToken));
     }
 
     @Test
-    void testExtractPermissions() {
+    void BUG004() {
         String token = jwtService.generateAccessToken(mockUser);
         List<String> permissions = jwtService.extractPermissions(token);
         assertEquals(List.of("READ_PRIVILEGES", "WRITE_PRIVILEGES"), permissions);
     }
 
     @Test
-    void testBlacklistToken() {
+    void BUG005() {
         String token = jwtService.generateAccessToken(mockUser);
         assertFalse(jwtService.isTokenBlacklisted(token));
         jwtService.blacklistToken(token);
@@ -66,20 +66,20 @@ class JwtServiceTest {
     }
 
     @Test
-    void testExtractExpiration() {
+    void BUG006() {
         String token = jwtService.generateAccessToken(mockUser);
         Date expiration = jwtService.extractExpiration(token);
         assertTrue(expiration.after(new Date()));
     }
 
     @Test
-    void testIsTokenValidInvalidToken() {
+    void BUG007() {
         String invalidToken = "invalid.token.value";
         assertFalse(jwtService.isTokenValid(invalidToken));
     }
 
     @Test
-    void testTokenWithWrongUser() {
+    void BUG008() {
         String token = jwtService.generateAccessToken(mockUser);
 
         UserResponse anotherUser = new UserResponse();
@@ -88,7 +88,7 @@ class JwtServiceTest {
     }
 
     @Test
-    void testTokenWithExpiredDate() throws InterruptedException {
+    void BUG009() throws InterruptedException {
         ReflectionTestUtils.setField(jwtService, "accessTokenExpiry", 1); // 1 ms
         String token = jwtService.generateAccessToken(mockUser);
         Thread.sleep(5); // Ensure token expires

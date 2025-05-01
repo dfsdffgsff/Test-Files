@@ -62,7 +62,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegisterUser_Success() {
+    void BUG011() {
         // Arrange
         RegisterRequest request = new RegisterRequest();
         request.setUsername("testuser");
@@ -95,7 +95,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testRegisterUser_EmailAlreadyExists() {
+    void BUG012() {
         RegisterRequest request = new RegisterRequest("testuser", "testemail@example.com", "password123");
         User existingUser = new User();
         existingUser.setEmail(request.getEmail());
@@ -117,7 +117,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void testAuthenticateUser_WithCorrectCredentials_ReturnsToken() {
+    void BUG010() {
         String email = "student@example.com";
         String rawPassword = "securepassword";
         String encodedPassword = "encoded123";

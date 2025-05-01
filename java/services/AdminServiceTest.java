@@ -60,7 +60,7 @@ class AdminServiceTest {
 
 
     @Test
-    void testUpdateUserRolesUserNotFound() {
+    void BUG019() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
         RoleUpdateRequest request = new RoleUpdateRequest();
@@ -75,7 +75,7 @@ class AdminServiceTest {
 
 
     @Test
-    void testCreateRoleAlreadyExists() {
+    void BUG020() {
         RoleRequest request = new RoleRequest();
         request.setRoleName("ROLE_ADMIN");
         request.setDescription("Admin Role");
@@ -90,7 +90,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void testDelegatePermissions() {
+    void BUG021() {
         DelegateRequest request = new DelegateRequest();
         request.setUserId(1L);
         request.setRole("ROLE_ADMIN");
@@ -114,7 +114,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void testDelegatePermissionsUserNotFound() {
+    void BUG022() {
         DelegateRequest request = new DelegateRequest();
         request.setUserId(2L);
         request.setRole("ROLE_ADMIN");
@@ -130,7 +130,7 @@ class AdminServiceTest {
 
 
     @Test
-    void testGetAuditLogs() {
+    void BUG023() {
         AuditLog mockLog = new AuditLog();
         mockLog.setId(1L);
         mockLog.setUser(mockUser);
@@ -148,7 +148,7 @@ class AdminServiceTest {
 
 
     @Test
-    void testGetUserByIdNotFound() {
+    void BUG024() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {

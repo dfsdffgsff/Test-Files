@@ -35,7 +35,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testLoadUserByUsername_Success() {
+    void BUG013() {
         User user = new User();
         user.setUsername("john");
         user.setEmail("john@example.com");
@@ -57,14 +57,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testLoadUserByUsername_NotFound() {
+    void BUG014() {
         when(userRepository.findByUsernameOrEmail("ghost", "ghost")).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("ghost"));
     }
 
     @Test
-    void testGetProfile_Success() {
+    void BUG015() {
         User user = new User();
         user.setUsername("jane");
         user.setEmail("jane@example.com");
@@ -82,14 +82,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testGetProfile_NotFound() {
+    void BUG016() {
         when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userService.getProfile("ghost"));
     }
 
     @Test
-    void testUpdateUser_Success() {
+    void BUG017() {
         User user = new User();
         user.setUsername("john");
         user.setEmail("john@example.com");
@@ -111,7 +111,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUser_NotFound() {
+    void BUG018() {
         when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
         UpdateUserRequest request = new UpdateUserRequest();

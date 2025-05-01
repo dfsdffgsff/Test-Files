@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SecurityConfigurationTest {
 
     @Test
-    void testRolesAreExtractedCorrectlyWithoutPrefix() {
+    void BUG032() {
         JwtAuthenticationConverter converter = new SecurityConfiguration().jwtAuthenticationConverter();
 
         Jwt jwt = Jwt.withTokenValue("fake-token")
@@ -41,7 +41,7 @@ public class SecurityConfigurationTest {
     }
 
     @Test
-    void jwtDecoder_withValidSecret_shouldReturnJwtDecoder() {
+    void BUG034() {
         // Arrange
         SecurityConfiguration config = new SecurityConfiguration();
         String validSecret = "thisisaverysecuresecretkeythatislongenough123";
@@ -55,7 +55,7 @@ public class SecurityConfigurationTest {
     }
 
     @Test
-    void jwtDecoder_withShortSecret_shouldThrowException() {
+    void BUG033() {
         // Arrange
         SecurityConfiguration config = new SecurityConfiguration();
         String shortSecret = "shortsecret";

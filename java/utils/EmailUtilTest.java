@@ -37,7 +37,7 @@ class EmailUtilTest {
     }
 
     @Test
-    void testSendPasswordResetEmail_Failure() {
+    void BUG030() {
         doThrow(new MailException("Error") {}).when(javaMailSender).send(any(SimpleMailMessage.class));
 
         boolean result = emailUtil.sendPasswordResetEmail(toEmail, subject, body, resetLink);
@@ -46,7 +46,7 @@ class EmailUtilTest {
     }
 
     @Test
-    void testSendPasswordResetEmailHtml_Failure() throws Exception {
+    void BUG031() throws Exception {
         when(javaMailSender.createMimeMessage()).thenThrow(new MailException("Mime error") {});
 
         boolean result = emailUtil.sendPasswordResetEmailHtml(toEmail, subject, body, resetLink);

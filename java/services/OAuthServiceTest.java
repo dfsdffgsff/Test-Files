@@ -35,7 +35,7 @@ class OAuthServiceTest {
     }
 
     @Test
-    void getGithubAccessToken_Success() {
+    void BUG025() {
         // Arrange
         String code = "test-code";
         Map<String, Object> responseBody = new HashMap<>();
@@ -56,7 +56,7 @@ class OAuthServiceTest {
     }
 
     @Test
-    void getGithubAccessToken_NullResponse() {
+    void BUG026() {
         // Arrange
         String code = "test-code";
         ResponseEntity<Map> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
@@ -74,7 +74,7 @@ class OAuthServiceTest {
 
 
     @Test
-    void getGithubUser_Success() {
+    void BUG027() {
         // Arrange
         String accessToken = "test-access-token";
         Map<String, Object> responseBody = new HashMap<>();
@@ -99,7 +99,7 @@ class OAuthServiceTest {
     }
 
     @Test
-    void getGithubUser_Unauthorized() {
+    void BUG028() {
         // Arrange
         String accessToken = "invalid-token";
 
@@ -115,7 +115,7 @@ class OAuthServiceTest {
     }
 
     @Test
-    void getGithubUser_NullResponse() {
+    void BUG029() {
         // Arrange
         String accessToken = "test-access-token";
         ResponseEntity<Map> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
