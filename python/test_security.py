@@ -62,7 +62,7 @@ def users_with_accounts(client):
     
     return users
 
-def BUG309(client, users_with_accounts):
+def test_resource_authorization(client, users_with_accounts):
     """Test that users can only access their own resources."""
     # Get user data from fixture
     user1, user2 = users_with_accounts

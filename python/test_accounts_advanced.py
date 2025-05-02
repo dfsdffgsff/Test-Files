@@ -42,7 +42,7 @@ def authenticated_user(client):
         'token': token
     }
 
-def BUG323(client, authenticated_user):
+def test_account_type_validation(client, authenticated_user):
     """Test validation of account types during account creation."""
     token = authenticated_user['token']
     
@@ -84,7 +84,7 @@ def BUG323(client, authenticated_user):
     )
     assert valid_savings_response.status_code == 201
 
-def BUG324(client, authenticated_user):
+def test_account_name_validation(client, authenticated_user):
     """Test validation of account names during account creation."""
     token = authenticated_user['token']
     
@@ -185,7 +185,7 @@ def test_account_deletion(client, authenticated_user):
     )
     assert get_response.status_code == 404
 
-def BUG325(client, authenticated_user):
+def test_account_listing(client, authenticated_user):
     """Test listing all accounts for a user."""
     token = authenticated_user['token']
     
@@ -228,7 +228,7 @@ def BUG325(client, authenticated_user):
     # Verify all returned accounts are of type checking
     assert all(account['type'] == 'checking' for account in checking_accounts)
 
-def BUG326(client):
+def test_account_access_control(client):
     """Test that users cannot access other users' accounts."""
     # Create first user
     user1_data = {
@@ -317,7 +317,7 @@ def BUG326(client):
     )
     assert delete_response.status_code in [403, 404]
 
-def BUG327(client, auth_headers):
+def test_account_limit(client, auth_headers):
     """Test limit on number of accounts per user."""
     headers, user = auth_headers
     max_accounts = 5  # Maximum number of accounts defined in the app
