@@ -59,7 +59,7 @@ def registered_user(client):
     return user_data
 
 
-def test_token_refresh(client, registered_user):
+def test_BUG302(client, registered_user):
     """Test that refresh tokens can be used to get new access tokens."""
     # Login to get token
     login_response = client.post(
@@ -122,7 +122,7 @@ def test_token_refresh(client, registered_user):
     )
     assert response.status_code == 401
 
-def test_token_refresh_with_role(client, registered_user):
+def test_BUG303(client, registered_user):
     """Test that refresh tokens retain the user's role."""
     login_response = client.post(
         '/api/auth/login',
@@ -157,7 +157,7 @@ def test_token_refresh_with_role(client, registered_user):
     assert decoded_new_access_token['role'] == 'user', "Access token role should be 'user'"
     assert decoded_new_refresh_token['role'] == 'user', "Refresh token role should be 'user'"
 
-def test_verify_token_with_expired_token(client):
+def test_BUG304(client):
     """Test that the verify_token endpoint incorrectly validates expired tokens."""
     # Create a test user
     with client.application.app_context():
@@ -182,7 +182,7 @@ def test_verify_token_with_expired_token(client):
     assert response.status_code == 401
 
 
-def test_password_change(client, registered_user):
+def test_BUG301(client, registered_user):
     """Test that users can change their password and old password no longer works."""
     # Login with original password
     login_response = client.post(
@@ -235,7 +235,7 @@ def test_password_change(client, registered_user):
     )
     assert profile_response.status_code == 200
 
-def test_logout_with_refresh_token(client, registered_user):
+def test_BUG305(client, registered_user):
     """Test that users can logout using refresh token and their tokens are invalidated."""
     # Login to get token
     login_response = client.post(
@@ -263,7 +263,7 @@ def test_logout_with_refresh_token(client, registered_user):
     )
     assert post_logout_response.status_code in [401, 403]
 
-def test_fresh_token_required(client, registered_user):
+def test_BUG306(client, registered_user):
     """Test that fresh tokens are required for certain actions."""
     # Login to get token
     login_response = client.post(
@@ -290,7 +290,7 @@ def test_fresh_token_required(client, registered_user):
     )
     assert password_change_response.status_code == 200
 
-def test_token_claims(client, registered_user):
+def test_BUG307(client, registered_user):
     """Test that JWT claims contain any sensitive information."""
     # Login to get token
     login_response = client.post(
@@ -312,7 +312,7 @@ def test_token_claims(client, registered_user):
     assert 'password' not in decoded_access_token, "Password should not be in token claims"
     assert 'password' not in decoded_refresh_token, "Password should not be in token claims"
 
-def test_token_blocklist_persistence(client, registered_user):
+def test_BUG308(client, registered_user):
     """Test that revoked tokens remain invalidated after a simulated restart."""
     # Login to get tokens
     login_response = client.post(

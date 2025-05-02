@@ -3,7 +3,7 @@ from app.models.transaction import Transaction
 from app.models.account import Account
 from app import db
 
-def test_deposit(client, auth_headers, test_account):
+def test_BUG310(client, auth_headers, test_account):
     """Test depositing funds into an account."""
     headers, _ = auth_headers
     
@@ -24,7 +24,7 @@ def test_deposit(client, auth_headers, test_account):
         account = Account.query.get(test_account['id'])
         assert account.balance == 100.0
 
-def test_withdraw(client, auth_headers, test_account):
+def test_BUG311(client, auth_headers, test_account):
     """Test withdrawing funds from an account."""
     headers, _ = auth_headers
     
@@ -52,7 +52,7 @@ def test_withdraw(client, auth_headers, test_account):
         account = Account.query.get(test_account['id'])
         assert account.balance == 150.0
 
-def test_withdraw_insufficient_funds(client, auth_headers, test_account):
+def test_BUG312(client, auth_headers, test_account):
     """Test withdrawing more funds than available."""
     headers, _ = auth_headers
     
@@ -77,7 +77,7 @@ def test_withdraw_insufficient_funds(client, auth_headers, test_account):
         account = Account.query.get(test_account['id'])
         assert account.balance == 50.0
 
-def test_transfer(client, auth_headers, test_account):
+def test_BUG313(client, auth_headers, test_account):
     """Test transferring funds between accounts."""
     headers, _ = auth_headers
     
@@ -116,7 +116,7 @@ def test_transfer(client, auth_headers, test_account):
         assert source_account.balance == 125.0
         assert dest_account.balance == 75.0
 
-def test_get_transactions(client, auth_headers, test_account):
+def test_BUG314(client, auth_headers, test_account):
     """Test retrieving transaction history."""
     headers, _ = auth_headers
     
