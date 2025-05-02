@@ -63,7 +63,7 @@ def populate_transactions(client, auth_headers, test_account):
     
     return transaction_data
 
-def test_transaction_filtering(client, auth_headers, test_account, populate_transactions):
+def BUG315(client, auth_headers, test_account, populate_transactions):
     """Test filtering transactions by date range and type."""
     headers, _ = auth_headers
     account_id = test_account['id']

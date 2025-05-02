@@ -2,7 +2,7 @@ import pytest
 from app.models.account import Account
 from app import db
 
-def test_account_creation(client, auth_headers):
+def BUG316(client, auth_headers):
     headers, _ = auth_headers
     
     response = client.post('/api/accounts', json={
@@ -14,7 +14,7 @@ def test_account_creation(client, auth_headers):
     assert response.get_json()['account']['account_type'] == 'savings'
     assert response.get_json()['account']['balance'] == 0.0
 
-def test_account_creation_validation(client, auth_headers):
+def BUG317(client, auth_headers):
     headers, _ = auth_headers
     
     response = client.post('/api/accounts', json={}, headers=headers)
@@ -25,7 +25,7 @@ def test_account_creation_validation(client, auth_headers):
     }, headers=headers)
     assert response.status_code == 400
 
-def test_get_accounts(client, auth_headers, test_account):
+def BUG318(client, auth_headers, test_account):
     headers, _ = auth_headers
     
     response = client.get('/api/accounts', headers=headers)
@@ -37,7 +37,7 @@ def test_get_accounts(client, auth_headers, test_account):
     account_ids = [account['id'] for account in response.get_json()['accounts']]
     assert test_account['id'] in account_ids
 
-def test_get_account_by_id(client, auth_headers, test_account):
+def BUG319(client, auth_headers, test_account):
     headers, _ = auth_headers
     
     response = client.get(f"/api/accounts/{test_account['id']}", headers=headers)
@@ -46,14 +46,14 @@ def test_get_account_by_id(client, auth_headers, test_account):
     assert 'account' in response.get_json()
     assert response.get_json()['account']['id'] == test_account['id']
 
-def test_get_nonexistent_account(client, auth_headers):
+def BUG320(client, auth_headers):
     headers, _ = auth_headers
     
     response = client.get('/api/accounts/9999', headers=headers)
     
     assert response.status_code == 404
 
-def test_update_account(client, auth_headers, test_account):
+def BUG321(client, auth_headers, test_account):
     headers, _ = auth_headers
     account_id = test_account['id']
     
@@ -73,7 +73,7 @@ def test_update_account(client, auth_headers, test_account):
     assert data['account']['account_name'] == update_data['name'] 
     assert data['account']['description'] == update_data['description']
 
-def test_delete_account(client, auth_headers, test_account):
+def BUG322(client, auth_headers, test_account):
     headers, _ = auth_headers
     account_id = test_account['id']
     
