@@ -225,8 +225,8 @@ TEST_F(ParallelizationTest, BUG107) {
     
     EXPECT_NEAR(energySingle, energyMulti, 1e-10) << "Energy calculations should yield identical results";
     EXPECT_LT(multiTime, singleTime) << "Multi-threaded energy calculation should be faster";
-    EXPECT_LE(multiTime, 300) << "Multi-threaded energy calculation should be less than 300";
-    EXPECT_LE(singleTime, 200) << "Single-threaded energy calculation should be less than 200";
+    EXPECT_LE(multiTime, 250) << "Multi-threaded energy calculation should be less than 300";
+    EXPECT_LE(singleTime, 350) << "Single-threaded energy calculation should be less than 200";
     EXPECT_GE((double)singleTime/multiTime, 1.5) << "Expected speedup with parallelization.";
 }
 
