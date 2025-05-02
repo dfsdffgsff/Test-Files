@@ -122,14 +122,10 @@ TEST_F(ParallelizationTest, BUG104) {
               << numSteps << " steps: " << multiTime << "ms" << std::endl;
     std::cout << "Speedup: " << (double)singleTime / multiTime << "x" << std::endl;
     
-    // Add more stringent performance requirements
-    EXPECT_LE(singleTime, 12000) << "Single thread implementation should complete in 12000ms or less";
-    
-    // Expect reasonable speedup (at least 1.2x with multiple threads)
-    // This is a conservative threshold since not all code can be perfectly parallelized
-    EXPECT_GT((double)singleTime / multiTime, 2) 
-        << "Expected speedup with parallelization. Single thread: " 
-        << singleTime << "ms, Multi-thread: " << multiTime << "ms";
+    EXPECT_GT((double)singleTime / multiTime, 2) << "Expected speedup with parallelization.";
+    EXPECT_LE(multiTime, 400) << "Multi-thread implementation should complete in 400ms or less";
+    EXPECT_GT(singleTime, multiTime) << "Single-thread time should be greater than Multi-thread time";
+    EXPECT_GT(singleTime, 1500) << "Single-thread time should be greater than 1200ms";
 }
 
 // Test individual optimized points - Position Updates
@@ -161,6 +157,9 @@ TEST_F(ParallelizationTest, BUG105) {
     std::cout << "Position updates multi-thread: " << multiTime << "µs" << std::endl;
     
     EXPECT_LT(multiTime, singleTime) << "Multi-threaded position updates should be faster than single-threaded";
+    EXPECT_LT(multiTime, 650) << "Multi-threaded position updates should be less than 1200µs";
+    EXPECT_GT(singleTime/multiTime, 2) << "Expected speedup with parallelization.";
+    EXPECT_LT(singleTime, 1500) << "Single-threaded position updates should be less than 3000µs";
 }
 
 // Test individual optimized points - Force Application
@@ -192,7 +191,9 @@ TEST_F(ParallelizationTest, BUG106) {
     std::cout << "Force application multi-thread: " << multiTime << "µs" << std::endl;
     
     EXPECT_LT(multiTime, singleTime) << "Multi-threaded force application should be faster than single-threaded";
-
+    EXPECT_LT(multiTime, 1500) << "Multi-threaded force application should be less than 1200µs";
+    EXPECT_GT(singleTime/multiTime, 2) << "Expected speedup with parallelization.";
+    EXPECT_LT(singleTime, 3500) << "Single-threaded force application should be less than 3000µs";
 }
 
 // Test individual optimized points - Energy Calculation
@@ -222,10 +223,11 @@ TEST_F(ParallelizationTest, BUG107) {
     std::cout << "Energy calculation single-thread: " << singleTime << "µs" << std::endl;
     std::cout << "Energy calculation multi-thread: " << multiTime << "µs" << std::endl;
     
-    // Verify results are the same (within floating-point precision)
     EXPECT_NEAR(energySingle, energyMulti, 1e-10) << "Energy calculations should yield identical results";
-    
     EXPECT_LT(multiTime, singleTime) << "Multi-threaded energy calculation should be faster";
+    EXPECT_LT(multiTime, 300) << "Multi-threaded energy calculation should be less than 300µs";
+    EXPECT_LT(singleTime, 200) << "Single-threaded energy calculation should be less than 200µs";
+    EXPECT_GT(singleTime/multiTime, 1.5) << "Expected speedup with parallelization.";
 }
 
 // Test that collision handling is correctly parallelized
@@ -261,4 +263,7 @@ TEST_F(ParallelizationTest, BUG108) {
     std::cout << "Collision handling multi-thread: " << multiTime << "µs" << std::endl;
     
     EXPECT_GT(singleTime, multiTime) << "Multi-threaded time should be less than Single-threaded time";
+    EXPECT_LT(singleTime,23000) << "Single-threaded collision handling should be less than 22000µs";
+    EXPECT_LT(multiTime, 500) << "Multi-threaded collision handling should be less than 500µs";
+    EXPECT_GT(singleTime/multiTime, 10) << "Expected speedup with parallelization.";
 }
