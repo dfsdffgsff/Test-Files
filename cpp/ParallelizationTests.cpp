@@ -48,7 +48,7 @@ protected:
 };
 
 // Test if thread count is correctly initialized
-TEST_F(ParallelizationTest, ThreadCountInitialization) {
+TEST_F(ParallelizationTest, BUG101) {
     // Create a simulation with a fixed number of threads
     Config config = createReproducibleConfig(0, FIXED_THREAD_COUNT);
     Simulation sim(config);
@@ -59,7 +59,7 @@ TEST_F(ParallelizationTest, ThreadCountInitialization) {
 }
 
 // Test if ThreadManager is properly activated
-TEST_F(ParallelizationTest, ThreadManagerActivation) {
+TEST_F(ParallelizationTest, BUG102) {
     // Create a simulation with a fixed number of threads
     Config config = createReproducibleConfig(0, FIXED_THREAD_COUNT);
     Simulation sim(config);
@@ -71,7 +71,7 @@ TEST_F(ParallelizationTest, ThreadManagerActivation) {
 }
 
 // Test if particle addition is thread-safe
-TEST_F(ParallelizationTest, ThreadSafeParticleAddition) {
+TEST_F(ParallelizationTest, BUG103) {
     // Create a simulation with multiple threads but no initial particles
     Config config = createReproducibleConfig(0, FIXED_THREAD_COUNT);
     Simulation sim(config);
@@ -84,7 +84,7 @@ TEST_F(ParallelizationTest, ThreadSafeParticleAddition) {
 }
 
 // Test if the application is properly parallelized by checking if performance improves with more threads
-TEST_F(ParallelizationTest, IsParallelized) {
+TEST_F(ParallelizationTest, BUG104) {
     const int numSteps = 100;
     const size_t particleCount = 5000;
     
@@ -133,7 +133,7 @@ TEST_F(ParallelizationTest, IsParallelized) {
 }
 
 // Test individual optimized points - Position Updates
-TEST_F(ParallelizationTest, ParallelPositionUpdates) {
+TEST_F(ParallelizationTest, BUG105) {
     const size_t particleCount = 10000;
     
     // Create a simulation with a single thread for comparison
@@ -164,7 +164,7 @@ TEST_F(ParallelizationTest, ParallelPositionUpdates) {
 }
 
 // Test individual optimized points - Force Application
-TEST_F(ParallelizationTest, ParallelForceApplication) {
+TEST_F(ParallelizationTest, BUG106) {
     const size_t particleCount = 10000;
     
     // Create simulations for single and multi-threaded tests
@@ -196,7 +196,7 @@ TEST_F(ParallelizationTest, ParallelForceApplication) {
 }
 
 // Test individual optimized points - Energy Calculation
-TEST_F(ParallelizationTest, ParallelEnergyCalculation) {
+TEST_F(ParallelizationTest, BUG107) {
     const size_t particleCount = 10000;
     
     Config config = createReproducibleConfig(particleCount, FIXED_THREAD_COUNT);
@@ -229,7 +229,7 @@ TEST_F(ParallelizationTest, ParallelEnergyCalculation) {
 }
 
 // Test that collision handling is correctly parallelized
-TEST_F(ParallelizationTest, ParallelCollisionHandling) {
+TEST_F(ParallelizationTest, BUG108) {
     // Set up a controlled scenario with many particles placed to cause collisions
     const size_t particleCount = 1000;
     

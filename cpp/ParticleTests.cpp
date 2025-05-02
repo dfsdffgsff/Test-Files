@@ -14,7 +14,7 @@ protected:
 };
 
 // Test position and velocity
-TEST_F(ParticleTest, PositionAndVelocity) {
+TEST_F(ParticleTest, BUG114) {
     particle->setPosition(1.0, 2.0);
     particle->setVelocity(4.0, 5.0);
     
@@ -26,7 +26,7 @@ TEST_F(ParticleTest, PositionAndVelocity) {
 }
 
 // Test energy management
-TEST_F(ParticleTest, EnergyManagement) {
+TEST_F(ParticleTest, BUG115) {
     const double initialEnergy = particle->getEnergy();
     
     // Add energy
@@ -60,7 +60,7 @@ TEST_F(ParticleTest, EnergyManagement) {
 }
 
 // Test collision
-TEST_F(ParticleTest, Collision) {
+TEST_F(ParticleTest, BUG116) {
     auto p1 = std::make_unique<Particle>(0.0, 0.0, 100.0, 1.0, 1000.0);
     auto p2 = std::make_unique<Particle>(2.0, 0.0, 100.0, 1.0, 1000.0);
 
@@ -93,7 +93,7 @@ TEST_F(ParticleTest, Collision) {
 }
 
 // Test collision detection
-TEST_F(ParticleTest, CollisionDetection) {
+TEST_F(ParticleTest, BUG117) {
     auto p1 = std::make_unique<Particle>(0.0, 0.0, 100.0, 1.0, 1000.0);
     auto p2 = std::make_unique<Particle>(2.0, 0.0, 100.0, 1.0, 1000.0);
     
@@ -107,7 +107,7 @@ TEST_F(ParticleTest, CollisionDetection) {
 }
 
 // Test thread safety
-TEST_F(ParticleTest, ThreadSafety) {
+TEST_F(ParticleTest, BUG118) {
     const int numThreads = 4;
     const int numIterations = 1000;
     std::vector<std::thread> threads;
@@ -147,7 +147,7 @@ TEST_F(ParticleTest, ThreadSafety) {
 }
 
 // Test memory management
-TEST_F(ParticleTest, MemoryManagement) {
+TEST_F(ParticleTest, BUG119) {
     const int numParticles = 1000;
     std::vector<std::unique_ptr<Particle>> particles;
     

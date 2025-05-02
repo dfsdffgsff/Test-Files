@@ -28,12 +28,12 @@ protected:
 };
 
 // Test field size
-TEST_F(ContainmentFieldTest, FieldSize) {
+TEST_F(ContainmentFieldTest, BUG110) {
     EXPECT_DOUBLE_EQ(field->getSize(), cfg.field_size);
 }
 
 // Test particle containment
-TEST_F(ContainmentFieldTest, ParticleContainment) {
+TEST_F(ContainmentFieldTest, BUG111) {
     double sizeHalf = cfg.field_size / 2.0;
 
     // Test inside field
@@ -62,7 +62,7 @@ TEST_F(ContainmentFieldTest, ParticleContainment) {
 }
 
 // Test containment force
-TEST_F(ContainmentFieldTest, ContainmentForce) {
+TEST_F(ContainmentFieldTest, BUG112) {
     const double fieldStrength = cfg.initial_strength; // 50.0
     const double halfSize = cfg.field_size / 2.0;      // 5.0
 
@@ -127,7 +127,7 @@ TEST_F(ContainmentFieldTest, ContainmentForce) {
 }
 
 // Test field strength getter/setter
-TEST_F(ContainmentFieldTest, FieldStrength) {
+TEST_F(ContainmentFieldTest, BUG113) {
     const double initialStrength = field->getFieldStrength(); // Reads initial strength
     EXPECT_DOUBLE_EQ(initialStrength, cfg.initial_strength);
     

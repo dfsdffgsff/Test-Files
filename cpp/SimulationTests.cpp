@@ -39,12 +39,12 @@ protected:
 };
 
 // Test that particles are initialized by the constructor
-TEST_F(SimulationTest, Initialization) {
+TEST_F(SimulationTest, BUG120) {
     EXPECT_EQ(simulation->getParticleCount(), testConfig.num_particles) << "Number of particles should match the config.";
 }
 
 // Test that a particle can be added to the simulation
-TEST_F(SimulationTest, AddParticle) {
+TEST_F(SimulationTest, BUG121) {
     size_t initialCount = simulation->getParticleCount();
     auto particle = std::make_unique<Particle>(
         0.0, 0.0, testConfig.initial_energy, testConfig.particle_radius, testConfig.max_energy
@@ -54,7 +54,7 @@ TEST_F(SimulationTest, AddParticle) {
 }
 
 // Test a single simulation step changes state
-TEST_F(SimulationTest, UpdateSimulation) {
+TEST_F(SimulationTest, BUG122) {
      // Ensure there are particles to update
     if (simulation->getParticleCount() == 0) {
         auto particle = std::make_unique<Particle>(1.0, 1.0, testConfig.initial_energy, testConfig.particle_radius, testConfig.max_energy);
@@ -76,7 +76,7 @@ TEST_F(SimulationTest, UpdateSimulation) {
 }
 
 // Test energy conservation
-TEST_F(SimulationTest, EnergyChange) {
+TEST_F(SimulationTest, BUG123) {
     if (simulation->getParticleCount() == 0) {
         testConfig.num_particles = 10;
         simulation = std::make_unique<Simulation>(testConfig);
@@ -93,7 +93,7 @@ TEST_F(SimulationTest, EnergyChange) {
 }
 
 // Test interactions
-TEST_F(SimulationTest, ParticleInteractionAndEscape) {
+TEST_F(SimulationTest, BUG124) {
     testConfig.num_particles = 2;
     simulation = std::make_unique<Simulation>(testConfig);
 
@@ -113,7 +113,7 @@ TEST_F(SimulationTest, ParticleInteractionAndEscape) {
 }
 
 // Test parallel performance
-TEST_F(SimulationTest, ParallelPerformance) {
+TEST_F(SimulationTest, BUG125) {
     testConfig.num_particles = 500; // Increase particle count
     simulation = std::make_unique<Simulation>(testConfig); // Recreate with more particles
 
