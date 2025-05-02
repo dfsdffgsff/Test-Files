@@ -19,13 +19,13 @@ describe("Currency select", () => {
 						handleClose: vi.fn(),
 					}}
 				>
-					<CartContext.Provider value={{ itemAmount: 0 }}>
-						<CurrencyContext.Provider
-							value={{ currency: "USD", setCurrency: mockSetCurrency }}
-						>
+					<CurrencyContext.Provider
+						value={{ currency: "USD", setCurrency: mockSetCurrency }}
+					>
+						<CartContext.Provider value={{ itemAmount: 0 }}>
 							<Header />
-						</CurrencyContext.Provider>
-					</CartContext.Provider>
+						</CartContext.Provider>
+					</CurrencyContext.Provider>
 				</SidebarContext.Provider>
 			</BrowserRouter>
 		);
