@@ -223,7 +223,7 @@ TEST_F(ParallelizationTest, BUG107) {
     std::cout << "Energy calculation single-thread: " << singleTime << "µs" << std::endl;
     std::cout << "Energy calculation multi-thread: " << multiTime << "µs" << std::endl;
     
-    XPECT_NEAR(energySingle, energyMulti, 1e-10) << "Energy calculations should yield identical results";
+    EXPECT_NEAR(energySingle, energyMulti, 1e-10) << "Energy calculations should yield identical results";
     EXPECT_LT(multiTime, singleTime) << "Multi-threaded energy calculation should be faster";
     EXPECT_LE(multiTime, 300) << "Multi-threaded energy calculation should be less than 300";
     EXPECT_LE(singleTime, 200) << "Single-threaded energy calculation should be less than 200";
