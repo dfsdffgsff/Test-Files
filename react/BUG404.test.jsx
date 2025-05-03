@@ -1,58 +1,130 @@
-// Header.test.jsx
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { BrowserRouter } from "react-router";
-import Header from "../components/Header";
-import { SidebarContext } from "../contexts/SidebarContext";
-import { CartContext } from "../contexts/CartContext";
-import { CurrencyContext } from "../contexts/CurrencyContext";
-import "@testing-library/jest-dom";
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
+// import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-describe("Header Component", () => {
-	// Mock the contexts
-	const mockSetIsOpen = vi.fn();
-	const mockSidebarContext = {
-		isOpen: false,
-		setIsOpen: mockSetIsOpen,
-	};
+// Mock firebase modules
+vi.mock("../firebase", () => ({
+  auth: {
+    currentUser: null,
+  },
+}));
 
-	const mockCartContext = {
-		itemAmount: 3,
-	};
+vi.mock("firebase/auth", () => ({
+  createUserWithEmailAndPassword: vi.fn(),
+  signInWithEmailAndPassword: vi.fn(),
+  signOut: vi.fn(),
+  onAuthStateChanged: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
+}));
 
-	const mockCurrencyContext = {
-		currency: "USD",
-		setCurrency: vi.fn(),
-		currencySymbol: "$",
-	};
+// Test component that uses auth context
+const TestComponent = () => {
+  const { currentUser, loading } = useAuth();
 
-	beforeEach(() => {
-		// Reset the mock function before each test
-		mockSetIsOpen.mockReset();
-	});
+  if (loading) {
+    return <div data-testid="loading">Loading...</div>;
+  }
 
-	test("cart button should open the sidebar when clicked", () => {
-		render(
-			<BrowserRouter>
-				<CurrencyContext.Provider value={mockCurrencyContext}>
-					<SidebarContext.Provider value={mockSidebarContext}>
-						<CartContext.Provider value={mockCartContext}>
-							<Header />
-						</CartContext.Provider>
-					</SidebarContext.Provider>
-				</CurrencyContext.Provider>
-			</BrowserRouter>
-		);
+  return (
+    <div>
+      <div data-testid="auth-status">
+        {currentUser ? "User is logged in" : "User is logged out"}
+      </div>
+    </div>
+  );
+};
 
-		// Find the cart button
-		const cartButton = document.querySelector(".cart-btn");
+describe("AuthContext", () => {
+  let mockUnsubscribe;
 
-		// Click the cart button
-		if (cartButton) {
-			fireEvent.click(cartButton);
-		}
+  beforeEach(() => {
+    mockUnsubscribe = vi.fn();
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Initially no user is logged in
+      callback(null);
+      return mockUnsubscribe;
+    });
+  });
 
-		// Check if setIsOpen was called with true
-		expect(mockSetIsOpen).toHaveBeenCalledTimes(1);
-	});
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders children when loading is complete", async () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Should not show loading after auth state is determined
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("sets loading to false even when user is null", () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Should not show loading and show correct auth status
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("sets currentUser to null when not logged in", () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("updates currentUser when logged in", async () => {
+    // Simulate a user logging in
+    const mockUser = { email: "test@example.com" };
+
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Simulate logged in user
+      callback(mockUser);
+      return mockUnsubscribe;
+    });
+
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged in"
+    );
+  });
+
+  it("properly unsubscribes from auth listener on unmount", () => {
+    const { unmount } = render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Unmount component
+    unmount();
+
+    // Verify unsubscribe was called
+    expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+  });
 });
