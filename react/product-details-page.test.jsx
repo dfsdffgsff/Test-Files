@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import App from "../App";
 import "@testing-library/jest-dom";
@@ -34,21 +34,23 @@ const mockCurrencyContext = {
 };
 
 describe("App routing", () => {
-	it("should render product details page when navigating to /product/1", () => {
+	it("should render product details page when navigating to /product/1", async () => {
 		// Render the app with a specific route
-		render(
-			<MemoryRouter initialEntries={["/product/1"]}>
-				<CurrencyContext.Provider value={mockCurrencyContext}>
-					<SidebarContext.Provider value={mockSidebarContext}>
-						<CartContext.Provider value={mockCartContext}>
-							<ProductContext.Provider value={mockProductContext}>
-								<App />
-							</ProductContext.Provider>
-						</CartContext.Provider>
-					</SidebarContext.Provider>
-				</CurrencyContext.Provider>
-			</MemoryRouter>
-		);
+		await act(async () => {
+			render(
+				<MemoryRouter initialEntries={["/product/1"]}>
+					<CurrencyContext.Provider value={mockCurrencyContext}>
+						<SidebarContext.Provider value={mockSidebarContext}>
+							<CartContext.Provider value={mockCartContext}>
+								<ProductContext.Provider value={mockProductContext}>
+									<App />
+								</ProductContext.Provider>
+							</CartContext.Provider>
+						</SidebarContext.Provider>
+					</CurrencyContext.Provider>
+				</MemoryRouter>
+			);
+		});
 
 		// Check if the product details page is rendered
 		expect(screen.getByTestId("product-details")).toBeInTheDocument();

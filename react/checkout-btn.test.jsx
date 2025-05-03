@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { SidebarContext } from "../contexts/SidebarContext";
 import { CartContext } from "../contexts/CartContext";
@@ -8,7 +8,7 @@ import { ProductContext } from "../contexts/ProductContext";
 import App from "../App";
 
 describe("Sidebar Component - Checkout Functionality", () => {
-	it("should navigate to checkout page when checkout button is clicked with items in cart", () => {
+	it("should navigate to checkout page when checkout button is clicked with items in cart", async () => {
 		const mockSidebarContext = {
 			isOpen: true,
 			handleClose: vi.fn(),
@@ -47,19 +47,21 @@ describe("Sidebar Component - Checkout Functionality", () => {
 		};
 
 		// Render the Sidebar component with all required contexts
-		render(
-			<MemoryRouter initialEntries={["/checkout"]}>
-				<CurrencyContext.Provider value={mockCurrencyContext}>
-					<SidebarContext.Provider value={mockSidebarContext}>
-						<CartContext.Provider value={mockCartContext}>
-							<ProductContext.Provider value={mockProductContext}>
-								<App />
-							</ProductContext.Provider>
-						</CartContext.Provider>
-					</SidebarContext.Provider>
-				</CurrencyContext.Provider>
-			</MemoryRouter>
-		);
+		await act(async () => {
+			render(
+				<MemoryRouter initialEntries={["/checkout"]}>
+					<CurrencyContext.Provider value={mockCurrencyContext}>
+						<SidebarContext.Provider value={mockSidebarContext}>
+							<CartContext.Provider value={mockCartContext}>
+								<ProductContext.Provider value={mockProductContext}>
+									<App />
+								</ProductContext.Provider>
+							</CartContext.Provider>
+						</SidebarContext.Provider>
+					</CurrencyContext.Provider>
+				</MemoryRouter>
+			);
+		});
 
 		expect(screen.getByTestId("checkout")).toBeInTheDocument();
 	});

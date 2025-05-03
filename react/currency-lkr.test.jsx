@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import Header from "../components/Header";
 import {
 	CurrencyContext,
@@ -8,32 +8,38 @@ import {
 } from "../contexts/CurrencyContext";
 import { SidebarContext } from "../contexts/SidebarContext";
 import { CartContext } from "../contexts/CartContext";
+import { AuthProvider } from "../contexts/AuthContext";
 import { MemoryRouter } from "react-router";
 
 describe("Currency select menu", () => {
-	test("should include LKR option with correct label and value", () => {
-		render(
-			<MemoryRouter>
-				<SidebarContext.Provider
-					value={{
-						isOpen: true,
-						handleClose: vi.fn(),
-					}}
-				>
-					<CurrencyContext.Provider
-						value={{
-							currency: "USD",
-							setCurrency: () => {},
-							currencySymbol: "$",
-						}}
-					>
-						<CartContext.Provider value={{ itemAmount: 0 }}>
-							<Header />
-						</CartContext.Provider>
-					</CurrencyContext.Provider>
-				</SidebarContext.Provider>
-			</MemoryRouter>
-		);
+	test("should include LKR option with correct label and value", async () => {
+		// Wrap the entire render in act()
+		await act(async () => {
+			render(
+				<MemoryRouter>
+					<AuthProvider>
+						<SidebarContext.Provider
+							value={{
+								isOpen: true,
+								handleClose: vi.fn(),
+							}}
+						>
+							<CurrencyContext.Provider
+								value={{
+									currency: "USD",
+									setCurrency: () => {},
+									currencySymbol: "$",
+								}}
+							>
+								<CartContext.Provider value={{ itemAmount: 0 }}>
+									<Header />
+								</CartContext.Provider>
+							</CurrencyContext.Provider>
+						</SidebarContext.Provider>
+					</AuthProvider>
+				</MemoryRouter>
+			);
+		});
 
 		// Find the LKR option in the dropdown
 		const lkrOption = screen.getByRole("option", { name: /LKR/i });
