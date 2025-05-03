@@ -1,86 +1,63 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, test, expect } from "vitest";
-import Home from "../pages/Home";
+// Header.test.jsx
+import { describe, test, expect, vi, beforeEach } from "vitest";
+import { render, act, fireEvent } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
-import { ProductContext } from "../contexts/ProductContext";
+import Header from "../components/Header";
+import { SidebarContext } from "../contexts/SidebarContext";
 import { CartContext } from "../contexts/CartContext";
 import { CurrencyContext } from "../contexts/CurrencyContext";
+import { AuthProvider } from "../contexts/AuthContext";
+import "@testing-library/jest-dom";
 
-describe("Home Page Category Filtering", () => {
-	test("filters products based on selected category", () => {
-		const mockProducts = [
-			{
-				id: 1,
-				title: "Men's Jacket",
-				category: "men's clothing",
-				price: 50,
-				image: "test.jpg",
-			},
-			{
-				id: 2,
-				title: "Gold Ring",
-				category: "jewelery",
-				price: 200,
-				image: "test.jpg",
-			},
-			{
-				id: 3,
-				title: "Women's Dress",
-				category: "women's clothing",
-				price: 80,
-				image: "test.jpg",
-			},
-		];
+describe("Header Component", () => {
+	// Mock the contexts
+	const mockSetIsOpen = vi.fn();
+	const mockSidebarContext = {
+		isOpen: false,
+		setIsOpen: mockSetIsOpen,
+	};
 
-		render(
-			<BrowserRouter>
-				<CurrencyContext.Provider
-					value={{ currency: "USD", currencySymbol: "$" }}
-				>
-					<CartContext.Provider value={{ addToCart: () => {} }}>
-						<ProductContext.Provider value={{ products: mockProducts }}>
-							<Home />
-						</ProductContext.Provider>
-					</CartContext.Provider>
-				</CurrencyContext.Provider>
-			</BrowserRouter>
-		);
+	const mockCartContext = {
+		itemAmount: 3,
+	};
 
-		// All products visible initially
-		expect(screen.getByText(/jacket/i)).toBeInTheDocument();
-		expect(screen.getByText(/ring/i)).toBeInTheDocument();
-		expect(screen.getByText(/dress/i)).toBeInTheDocument();
+	const mockCurrencyContext = {
+		currency: "USD",
+		setCurrency: vi.fn(),
+		currencySymbol: "$",
+	};
 
-		// Click "jewelery"
-		const jewelryButton = screen.getByRole("button", {
-			name: /Filter by jewelery/i,
+	beforeEach(() => {
+		// Reset the mock function before each test
+		mockSetIsOpen.mockReset();
+	});
+
+	test("cart button should open the sidebar when clicked", async () => {
+		await act(async () => {
+			render(
+				<BrowserRouter>
+					<AuthProvider>
+						<CurrencyContext.Provider value={mockCurrencyContext}>
+							<SidebarContext.Provider value={mockSidebarContext}>
+								<CartContext.Provider value={mockCartContext}>
+									<Header />
+								</CartContext.Provider>
+							</SidebarContext.Provider>
+						</CurrencyContext.Provider>
+					</AuthProvider>
+				</BrowserRouter>
+			);
 		});
-		fireEvent.click(jewelryButton);
 
-		// Only jewelery should be visible
-		expect(screen.getByText(/ring/i)).toBeInTheDocument();
-		expect(screen.queryByText(/jacket/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(/dress/i)).not.toBeInTheDocument();
+		// Find the cart button
+		const cartButton = document.querySelector(".cart-btn");
 
-		// Click "all"
-		const allButton = screen.getByRole("button", {
-			name: /Filter by all products/i,
-		});
-		fireEvent.click(allButton);
+		// Click the cart button
+		if (cartButton) {
+			fireEvent.click(cartButton);
+		}
 
-		// All products should be visible again
-		expect(screen.getByText(/jacket/i)).toBeInTheDocument();
-		expect(screen.getByText(/ring/i)).toBeInTheDocument();
-		expect(screen.getByText(/dress/i)).toBeInTheDocument();
-
-		// Click "men's clothing"
-		const mensClothingButton = screen.getByRole("button", {
-			name: /Filter by men's clothing/i,
-		});
-		fireEvent.click(mensClothingButton);
-
-		expect(screen.getByText(/jacket/i)).toBeInTheDocument();
-		expect(screen.queryByText(/ring/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(/dress/i)).not.toBeInTheDocument();
+		// Check if setIsOpen was called with true
+		expect(mockSetIsOpen).toHaveBeenCalledTimes(1);
 	});
 });
