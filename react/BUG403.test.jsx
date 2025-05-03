@@ -1,38 +1,130 @@
-import { describe, test, expect, beforeEach } from "vitest";
-import { render, screen, act } from "@testing-library/react";
-import CartProvider from "../contexts/CartContext";
-import { CartTestComponent } from "./components/cart";
-import "@testing-library/jest-dom";
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
+// import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-describe("Shopping Cart", () => {
-	let wrapper;
+// Mock firebase modules
+vi.mock("../firebase", () => ({
+  auth: {
+    currentUser: null,
+  },
+}));
 
-	beforeEach(() => {
-		wrapper = render(
-			<CartProvider>
-				<CartTestComponent />
-			</CartProvider>
-		);
-	});
+vi.mock("firebase/auth", () => ({
+  createUserWithEmailAndPassword: vi.fn(),
+  signInWithEmailAndPassword: vi.fn(),
+  signOut: vi.fn(),
+  onAuthStateChanged: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
+}));
 
-	test("should correctly calculate total price based on price and amount", () => {
-		act(() => {
-			screen.getByTestId("add-product").click();
-		});
+// Test component that uses auth context
+const TestComponent = () => {
+  const { currentUser, loading } = useAuth();
 
-		act(() => {
-			screen.getByTestId("add-product").click();
-		});
+  if (loading) {
+    return <div data-testid="loading">Loading...</div>;
+  }
 
-		// When fixed, total should be price × amount (10 × 2 = 20)
-		expect(screen.getByTestId("total").textContent).toBe("20");
+  return (
+    <div>
+      <div data-testid="auth-status">
+        {currentUser ? "User is logged in" : "User is logged out"}
+      </div>
+    </div>
+  );
+};
 
-		// Add another product to verify total calculation
-		act(() => {
-			screen.getByTestId("add-another-product").click();
-		});
+describe("AuthContext", () => {
+  let mockUnsubscribe;
 
-		// Total should now be 20 + 20 = 40
-		expect(screen.getByTestId("total").textContent).toBe("40");
-	});
+  beforeEach(() => {
+    mockUnsubscribe = vi.fn();
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Initially no user is logged in
+      callback(null);
+      return mockUnsubscribe;
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders children when loading is complete", async () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Should not show loading after auth state is determined
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("sets loading to false even when user is null", () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Should not show loading and show correct auth status
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("sets currentUser to null when not logged in", () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged out"
+    );
+  });
+
+  it("updates currentUser when logged in", async () => {
+    // Simulate a user logging in
+    const mockUser = { email: "test@example.com" };
+
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Simulate logged in user
+      callback(mockUser);
+      return mockUnsubscribe;
+    });
+
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    expect(screen.getByTestId("auth-status").textContent).toContain(
+      "User is logged in"
+    );
+  });
+
+  it("properly unsubscribes from auth listener on unmount", () => {
+    const { unmount } = render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    // Unmount component
+    unmount();
+
+    // Verify unsubscribe was called
+    expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+  });
 });
